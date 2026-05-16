@@ -337,7 +337,7 @@ exit 0
         running: false
 
         stdout: SplitParser {
-            onRead: data => {
+            onRead: function(data) {
                 try {
                     const result = JSON.parse(data.trim())
 
@@ -416,7 +416,7 @@ exit 0
             }
         }
 
-        onExited: (exitCode, exitStatus) => {
+        onExited: function(exitCode, exitStatus) {
             root.isLoading = false
             if (exitCode !== 0 && !root.isError) {
                 console.error("Codeforces: Script failed with exit code", exitCode)
@@ -524,8 +524,8 @@ exit 0
             x: root.popoutX >= 0 ? root.popoutX : x
             y: root.popoutY >= 0 ? root.popoutY : y
 
-            onXChanged: if (visible) Qt.callLater(() => root.savePopoutPosition(x, y))
-            onYChanged: if (visible) Qt.callLater(() => root.savePopoutPosition(x, y))
+            onXChanged: if (visible) Qt.callLater(function() { root.savePopoutPosition(x, y) })
+            onYChanged: if (visible) Qt.callLater(function() { root.savePopoutPosition(x, y) })
 
             headerText: "Codeforces Activity"
             detailsText: {
@@ -668,8 +668,6 @@ exit 0
 
                             Column {
                                 spacing: 3
-                                required property var modelData
-                                required property int index
 
                                 Repeater {
                                     model: modelData
@@ -681,8 +679,6 @@ exit 0
                                         color: modelData.color || Theme.surfaceContainer
                                         border.color: Qt.darker(color, 1.15)
                                         border.width: 1
-
-                                        required property var modelData
 
                                         opacity: root.isLoading ? 0.6 : 1.0
 
