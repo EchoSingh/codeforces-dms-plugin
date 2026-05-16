@@ -1,0 +1,17 @@
+{
+  "id": "codeforcesHeatmap",
+  "name": "Codeforces Heatmap",
+  "description": "Display daily Codeforces problem solving activity with a color-coded heatmap",
+  "version": "1.0.0",
+  "author": "Deppes",
+  "icon": "code",
+  "type": "widget",
+  "firstParty": false,
+  "component": "./CodeForcesHeatMapWidget.qml",
+  "settings": "./CodeForcesHeatMapSettings.qml",
+  "permissions": [
+    "settings_read",
+    "settings_write",
+    "process_read"
+  ]
+}

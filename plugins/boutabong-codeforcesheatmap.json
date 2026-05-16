@@ -1,0 +1,13 @@
+{
+    "id": "codeforcesHeatmap",
+    "name": "Codeforces Heatmap",
+    "capabilities": ["dankbar-widget"],
+    "category": "monitoring",
+    "repo": "https://github.com/boutabong/dms-plugins",
+    "path": "CodeForcesHeatMap",
+    "author": "Deppes",
+    "description": "Display daily Codeforces problem solving activity with a color-coded heatmap",
+    "dependencies": ["bash", "curl", "jq", "libnotify", "xdg-utils"],
+    "compositors": ["niri"],
+    "distro": ["arch"]
+}
