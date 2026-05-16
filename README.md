@@ -24,17 +24,12 @@ Codeforces Heatmap is a Dank Material Shell plugin that visualizes your Codeforc
 ## Installation
 
 1. Clone or copy this repository.
-2. Ensure the `CodeForcesHeatMap/` folder is available to Dank Material Shell.
-3. Register the plugin using the repository metadata in `plugins/codeforcesheatmap.json`.
-4. Set your Codeforces handle in the plugin settings.
+2. Past it in ~/.config/DankMaterialShell/plugins/.
+3. `dms restart` in the terminal.
+4.  put ur handle and save add the widget in Dank Bar
 
-## Repository Information
-
-- Plugin name: `Codeforces Heatmap`
-- Plugin id: `codeforcesHeatmap`
-- Author: `EchoSingh`
-- Repository: `https://github.com/EchoSingh/codeforces-dms-plugin.git`
+also , u can find it in third-party plugins
 
 ## Notes
 
-The plugin is designed for the official Dank Material Shell registry format and follows the required plugin metadata schema.
+The plugin is designed for the official Dank Material Shell .
