@@ -185,7 +185,7 @@ while read -r submission_json; do
     [ "$creation_time" -lt "$start_timestamp" ] && continue
     [ "$creation_time" -gt "$today_timestamp" ] && continue
     submission_date=$(date -d "@$creation_time" +%Y-%m-%d)
-    daily_counts["$submission_date"]=$(( ${daily_counts["$submission_date"]:-0} + 1 ))
+    daily_counts["$submission_date"]=$(( \${daily_counts["$submission_date"]:-0} + 1 ))
     total_submissions=$((total_submissions + 1))
 done < <(echo "$body" | jq -c '.result[]')
 
@@ -199,9 +199,9 @@ current_timestamp=$(date -d "$start_date" +%s)
 while [ "$current_timestamp" -le "$today_timestamp" ]; do
     current_date=$(date -d "@$current_timestamp" +%Y-%m-%d)
     weekday=$(date -d "@$current_timestamp" +%w)
-    weekday_name="${weekday_names[$weekday]}"
+    weekday_name="\${weekday_names[$weekday]}"
     formatted_date=$(date -d "@$current_timestamp" "+%d / %b / %y")
-    count=${daily_counts["$current_date"]:-0}
+    count=\${daily_counts["$current_date"]:-0}
     color=$(color_for_count "$count")
     day_obj=$(jq -nc --argjson weekday "$weekday" --arg weekdayName "$weekday_name" --arg date "$formatted_date" --argjson count "$count" --arg color "$color" '{weekday:$weekday,weekdayName:$weekdayName,date:$date,count:$count,color:$color}')
     all_days+=("$day_obj")
@@ -220,7 +220,7 @@ done
 if [ "$week_day_count" -gt 0 ]; then
     while [ "$week_day_count" -lt 7 ]; do
         placeholder_weekday=$week_day_count
-        placeholder_name="${weekday_names[$placeholder_weekday]}"
+        placeholder_name="\${weekday_names[$placeholder_weekday]}"
         placeholder_obj=$(jq -nc --argjson weekday "$placeholder_weekday" --arg weekdayName "$placeholder_name" --arg date "--/--" --argjson count 0 --arg color "$COLOR_0" '{weekday:$weekday,weekdayName:$weekdayName,date:$date,count:$count,color:$color}')
         [ "$week_day_count" -gt 0 ] && current_week="$current_week,"
         current_week="$current_week$placeholder_obj"
@@ -231,14 +231,14 @@ if [ "$week_day_count" -gt 0 ]; then
 fi
 
 grid_json="$grid_json]"
-day_count=${#all_days[@]}
+day_count=\${#all_days[@]}
 pill_start=$((day_count - 7))
 [ "$pill_start" -lt 0 ] && pill_start=0
 pill_json="["
 pill_count=0
 for (( i=pill_start; i<day_count; i++ )); do
     [ "$pill_count" -gt 0 ] && pill_json="$pill_json,"
-    pill_json="$pill_json${all_days[$i]}"
+    pill_json="$pill_json\${all_days[$i]}"
     pill_count=$((pill_count + 1))
 done
 pill_json="$pill_json]"
