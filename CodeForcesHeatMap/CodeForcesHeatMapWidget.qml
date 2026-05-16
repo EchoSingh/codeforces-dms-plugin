@@ -22,6 +22,7 @@ PluginComponent {
     property var contributions: []
     property var gridData: []
     property var todayDay: null
+    property string profileImageUrl: "icons8-codeforces-24.png"
     property string totalContributions: "0"
     property bool isError: false
     property bool isLoading: false
@@ -68,6 +69,7 @@ PluginComponent {
         totalContributions = "0"
         isError = false
         todayDay = placeholders[placeholders.length - 1]
+        profileImageUrl = "icons8-codeforces-24.png"
 
         const gridPlaceholders = []
         for (let week = 0; week < 8; week++) {
@@ -130,6 +132,7 @@ PluginComponent {
 
         return `
 CODEFORCES_HANDLE="${escapedHandle}"
+fallback_profile_image="icons8-codeforces-24.png"
     COLOR_0="#1b1f2a"
     COLOR_1="#263b6d"
     COLOR_2="#1d6f6b"
@@ -160,6 +163,22 @@ else
 fi
 start_date=$(date -d "$current_sunday -49 days" +%Y-%m-%d)
 start_timestamp=$(date -d "$start_date" +%s)
+
+profile_url="$fallback_profile_image"
+profile_response=$(mktemp)
+profile_http_code=$(curl -s -w "%{http_code}" -o "$profile_response" "https://codeforces.com/api/user.info?handles=$CODEFORCES_HANDLE")
+profile_body=$(cat "$profile_response")
+rm -f "$profile_response"
+
+if [ "$profile_http_code" = "200" ]; then
+    title_photo=$(echo "$profile_body" | jq -r '.result[0].titlePhoto // empty')
+    avatar_photo=$(echo "$profile_body" | jq -r '.result[0].avatar // empty')
+    if [ -n "$title_photo" ] && [ "$title_photo" != "https://userpic.codeforces.org/no-title.jpg" ] && [ "$title_photo" != "https://userpic.codeforces.org/no-avatar.jpg" ]; then
+        profile_url="$title_photo"
+    elif [ -n "$avatar_photo" ] && [ "$avatar_photo" != "https://userpic.codeforces.org/no-avatar.jpg" ]; then
+        profile_url="$avatar_photo"
+    fi
+fi
 
 url="https://codeforces.com/api/user.status?handle=$CODEFORCES_HANDLE&from=1&count=1000"
 temp_response=$(mktemp)
@@ -247,7 +266,7 @@ for (( i=pill_start; i<day_count; i++ )); do
 done
 pill_json="$pill_json]"
 
-printf '{"contributions":%s,"gridData":%s,"total":%d,"error":false}\n' "$pill_json" "$grid_json" "$total_submissions"
+printf '{"contributions":%s,"gridData":%s,"profileImageUrl":%s,"total":%d,"error":false}\n' "$pill_json" "$grid_json" "$(jq -Rn --arg url "$profile_url" '$url')" "$total_submissions"
 exit 0
 `
     }
@@ -272,6 +291,7 @@ exit 0
 
                     root.isError = false
                     root.isLoading = false
+                    root.profileImageUrl = result.profileImageUrl || "icons8-codeforces-24.png"
 
                     let newContributions = result.contributions || []
                     while (newContributions.length < 7) {
@@ -415,14 +435,14 @@ exit 0
                             width: 52
                             height: 52
                             radius: 26
-                            color: Theme.primary
+                            color: Theme.surfaceContainerHighest
                             clip: true
 
                             Image {
                                 anchors.fill: parent
-                                anchors.margins: 8
-                                source: "icons8-codeforces-24.png"
-                                fillMode: Image.PreserveAspectFit
+                                anchors.margins: 6
+                                source: root.profileImageUrl || "icons8-codeforces-24.png"
+                                fillMode: Image.PreserveAspectCrop
                                 smooth: true
                             }
                         }
