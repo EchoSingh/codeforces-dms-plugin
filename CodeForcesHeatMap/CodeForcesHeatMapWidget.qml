@@ -21,6 +21,7 @@ PluginComponent {
 
     property var contributions: []
     property var gridData: []
+    property var todayDay: null
     property string totalContributions: "0"
     property bool isError: false
     property bool isLoading: false
@@ -66,6 +67,7 @@ PluginComponent {
         contributions = placeholders
         totalContributions = "0"
         isError = false
+        todayDay = placeholders[placeholders.length - 1]
 
         const gridPlaceholders = []
         for (let week = 0; week < 8; week++) {
@@ -128,21 +130,23 @@ PluginComponent {
 
         return `
 CODEFORCES_HANDLE="${escapedHandle}"
-COLOR_0="#1f2430"
-COLOR_1="#2563eb"
-COLOR_2="#8b5cf6"
-COLOR_3="#ec4899"
-COLOR_4="#f59e0b"
-COLOR_5="#ef4444"
+    COLOR_0="#1b1f2a"
+    COLOR_1="#263b6d"
+    COLOR_2="#1d6f6b"
+    COLOR_3="#1f8a4c"
+    COLOR_4="#b59b17"
+    COLOR_5="#d97706"
+    COLOR_6="#dc2626"
 
 color_for_count() {
     count="$1"
     if [ "$count" -le 0 ]; then echo "$COLOR_0"
     elif [ "$count" -eq 1 ]; then echo "$COLOR_1"
-    elif [ "$count" -le 3 ]; then echo "$COLOR_2"
-    elif [ "$count" -le 6 ]; then echo "$COLOR_3"
-    elif [ "$count" -le 10 ]; then echo "$COLOR_4"
-    else echo "$COLOR_5"
+    elif [ "$count" -le 2 ]; then echo "$COLOR_2"
+    elif [ "$count" -le 4 ]; then echo "$COLOR_3"
+    elif [ "$count" -le 7 ]; then echo "$COLOR_4"
+    elif [ "$count" -le 11 ]; then echo "$COLOR_5"
+    else echo "$COLOR_6"
     fi
 }
 
@@ -292,6 +296,10 @@ exit 0
                         }
                     }
                     root.gridData = newGridData.slice(-8)
+                    if (root.gridData.length > 0) {
+                        const lastWeek = root.gridData[root.gridData.length - 1]
+                        root.todayDay = lastWeek[lastWeek.length - 1]
+                    }
                     if (root.isManualRefresh) notifySuccess.running = true
                 } catch (e) {
                     root.isError = true
@@ -380,17 +388,67 @@ exit 0
             y: root.popoutY >= 0 ? root.popoutY : y
             onXChanged: if (visible) PluginService.savePluginData("codeforcesHeatmap", "popoutX", x)
             onYChanged: if (visible) PluginService.savePluginData("codeforcesHeatmap", "popoutY", y)
-            headerText: "Codeforces Activity"
+            headerText: "Codeforces Heatmap"
             detailsText: {
                 if (root.isError) return root.errorMessage
                 if (root.isLoading) return "Loading..."
-                return root.totalContributions + " solved problems (8 weeks)"
+                return root.codeforcesHandle
             }
             showCloseButton: false
 
             Column {
                 width: parent.width
                 spacing: Theme.spacingM
+
+                StyledRect {
+                    width: parent.width
+                    height: 84
+                    radius: Theme.cornerRadius
+                    color: Theme.surfaceContainerHigh
+
+                    Row {
+                        anchors.fill: parent
+                        anchors.margins: Theme.spacingL
+                        spacing: Theme.spacingM
+
+                        Rectangle {
+                            width: 52
+                            height: 52
+                            radius: 26
+                            color: Theme.primary
+                            gradient: Gradient {
+                                GradientStop { position: 0.0; color: "#2563eb" }
+                                GradientStop { position: 1.0; color: "#1f8a4c" }
+                            }
+
+                            StyledText {
+                                anchors.centerIn: parent
+                                text: "CF"
+                                color: "white"
+                                font.weight: Font.Bold
+                                font.pixelSize: 18
+                            }
+                        }
+
+                        Column {
+                            anchors.verticalCenter: parent.verticalCenter
+                            spacing: 2
+
+                            StyledText {
+                                text: root.codeforcesHandle || "Set your handle"
+                                font.pixelSize: Theme.fontSizeLarge
+                                font.weight: Font.Bold
+                                color: Theme.surfaceText
+                            }
+
+                            StyledText {
+                                text: root.isError ? root.errorMessage : (root.totalContributions + " contributions")
+                                font.pixelSize: Theme.fontSizeSmall
+                                color: Theme.surfaceVariantText
+                            }
+                        }
+                    }
+                }
 
                 Row {
                     anchors.right: parent.right
@@ -483,12 +541,59 @@ exit 0
                 }
 
                 StyledRect {
-                    visible: !root.isError && root.totalContributions === "0"
                     width: parent.width
-                    height: 50
+                    height: 96
                     color: Theme.surfaceContainerHigh
                     radius: Theme.cornerRadius
-                    StyledText { anchors.centerIn: parent; text: "No solved problems yet"; color: Theme.surfaceVariantText; font.pixelSize: Theme.fontSizeSmall }
+
+                    Row {
+                        anchors.fill: parent
+                        anchors.margins: Theme.spacingL
+                        spacing: Theme.spacingL
+
+                        Column {
+                            width: 92
+                            spacing: 2
+
+                            StyledText {
+                                text: root.todayDay ? root.todayDay.count : 0
+                                color: Theme.primary
+                                font.pixelSize: 42
+                                font.weight: Font.Bold
+                            }
+
+                            StyledText {
+                                text: "today"
+                                color: Theme.surfaceVariantText
+                                font.pixelSize: Theme.fontSizeSmall
+                            }
+                        }
+
+                        Rectangle {
+                            width: 1
+                            height: parent.height - Theme.spacingL * 2
+                            color: Theme.outlineVariant
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+
+                        Column {
+                            anchors.verticalCenter: parent.verticalCenter
+                            spacing: 4
+
+                            StyledText {
+                                text: root.todayDay ? root.todayDay.weekdayName : "Today"
+                                color: Theme.surfaceText
+                                font.pixelSize: Theme.fontSizeMedium
+                                font.weight: Font.Bold
+                            }
+
+                            StyledText {
+                                text: root.todayDay ? root.todayDay.date : "--/--"
+                                color: Theme.surfaceVariantText
+                                font.pixelSize: Theme.fontSizeSmall
+                            }
+                        }
+                    }
                 }
             }
         }
