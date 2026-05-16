@@ -7,7 +7,7 @@
     "path": "CodeForcesHeatMap",
     "author": "EchoSingh",
     "description": "Display daily Codeforces problem solving activity with a color-coded heatmap",
-    "dependencies": ["bash", "curl", "jq", "libnotify", "xdg-utils"],
+    "dependencies": ["bash", "curl", "jq", "notify-send", "xdg-open"],
     "compositors": ["niri"],
     "distro": ["arch"]
 }
