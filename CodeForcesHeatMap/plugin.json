@@ -3,7 +3,7 @@
   "name": "Codeforces Heatmap",
   "description": "Display daily Codeforces problem solving activity with a color-coded heatmap",
   "version": "1.0.0",
-  "author": "Deppes",
+  "author": "EchoSingh",
   "icon": "code",
   "type": "widget",
   "firstParty": false,
