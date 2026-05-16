@@ -668,15 +668,17 @@ exit 0
 
                             Column {
                                 spacing: 3
+                                property var weekData: modelData
 
                                 Repeater {
-                                    model: modelData
+                                    model: weekData
 
                                     Rectangle {
+                                        property var dayData: modelData
                                         width: 26
                                         height: 26
                                         radius: 4
-                                        color: modelData.color || Theme.surfaceContainer
+                                        color: dayData.color || Theme.surfaceContainer
                                         border.color: Qt.darker(color, 1.15)
                                         border.width: 1
 
@@ -697,7 +699,7 @@ exit 0
                                         }
 
                                         Rectangle {
-                                            visible: cellMouse.containsMouse && modelData.date !== "--/--"
+                                            visible: cellMouse.containsMouse && dayData.date !== "--/--"
                                             x: -25
                                             y: -30
                                             width: tooltipText.implicitWidth + 12
@@ -709,7 +711,7 @@ exit 0
                                             StyledText {
                                                 id: tooltipText
                                                 anchors.centerIn: parent
-                                                text: modelData.date + ": " + modelData.count
+                                                text: dayData.date + ": " + dayData.count
                                                 font.pixelSize: 11
                                                 color: Theme.surfaceText
                                             }
