@@ -12,6 +12,6 @@
   "permissions": [
     "settings_read",
     "settings_write",
-    "process"
+    "process_read"
   ]
 }
