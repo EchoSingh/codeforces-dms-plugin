@@ -5,6 +5,9 @@
   "version": "1.0.0",
   "author": "EchoSingh",
   "icon": "code",
+  "capabilities": [
+    "dankbar-widget"
+  ],
   "type": "widget",
   "firstParty": false,
   "component": "./CodeForcesHeatMapWidget.qml",
