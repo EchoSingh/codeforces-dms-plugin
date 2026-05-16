@@ -258,7 +258,7 @@ while [ "$current_timestamp" -le "$end_timestamp" ]; do
 
     total_submissions=$((total_submissions + count))
 
-    day_obj="{\\\"weekday\\\":$weekday,\\\"weekdayName\\\":\\\"$weekday_name\\\",\\\"date\\\":\\\"$formatted_date\\\",\\\"count\\\":$count,\\\"color\\\":\\\"$color\\\"}"
+    day_obj=$(jq -nc --argjson weekday "$weekday" --arg weekdayName "$weekday_name" --arg date "$formatted_date" --argjson count "$count" --arg color "$color" '{weekday:$weekday,weekdayName:$weekdayName,date:$date,count:$count,color:$color}')
     all_days+=("$day_obj")
 
     if [ "$week_day_count" -eq 0 ]; then
@@ -290,7 +290,7 @@ if [ "$week_day_count" -gt 0 ]; then
         placeholder_name="\${weekday_names[$placeholder_weekday]}"
         placeholder_date="--/--"
         placeholder_color="$COLOR_0"
-        placeholder_obj="{\\\"weekday\\\":$placeholder_weekday,\\\"weekdayName\\\":\\\"$placeholder_name\\\",\\\"date\\\":\\\"$placeholder_date\\\",\\\"count\\\":0,\\\"color\\\":\\\"$placeholder_color\\\"}"
+        placeholder_obj=$(jq -nc --argjson weekday "$placeholder_weekday" --arg weekdayName "$placeholder_name" --arg date "$placeholder_date" --argjson count 0 --arg color "$placeholder_color" '{weekday:$weekday,weekdayName:$weekdayName,date:$date,count:$count,color:$color}')
         if [ "$week_day_count" -eq 0 ]; then
             current_week="[$placeholder_obj"
         else
@@ -318,12 +318,10 @@ pill_json="["
 pill_count=0
 
 for (( i=pill_start; i<day_count; i++ )); do
-    day_data="\${all_days[$i]}"
-    IFS='|' read -r _ <<< ""
     if [ "$pill_count" -gt 0 ]; then
         pill_json="$pill_json,"
     fi
-    pill_json="$pill_json$day_data"
+    pill_json="$pill_json\${all_days[$i]}"
     pill_count=$((pill_count + 1))
 done
 pill_json="$pill_json]"
