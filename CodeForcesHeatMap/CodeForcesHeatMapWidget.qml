@@ -416,17 +416,14 @@ exit 0
                             height: 52
                             radius: 26
                             color: Theme.primary
-                            gradient: Gradient {
-                                GradientStop { position: 0.0; color: "#2563eb" }
-                                GradientStop { position: 1.0; color: "#1f8a4c" }
-                            }
+                            clip: true
 
-                            StyledText {
-                                anchors.centerIn: parent
-                                text: "CF"
-                                color: "white"
-                                font.weight: Font.Bold
-                                font.pixelSize: 18
+                            Image {
+                                anchors.fill: parent
+                                anchors.margins: 8
+                                source: "icons8-codeforces-24.png"
+                                fillMode: Image.PreserveAspectFit
+                                smooth: true
                             }
                         }
 
@@ -521,18 +518,6 @@ exit 0
                                         opacity: root.isLoading ? 0.6 : 1.0
                                         Behavior on opacity { NumberAnimation { duration: 200 } }
                                         Behavior on color { ColorAnimation { duration: 300 } }
-                                        MouseArea { id: cellMouse; anchors.fill: parent; hoverEnabled: true }
-                                        Rectangle {
-                                            visible: cellMouse.containsMouse && dayData.date !== "--/--"
-                                            x: -25
-                                            y: -30
-                                            width: tooltipText.implicitWidth + 12
-                                            height: tooltipText.implicitHeight + 8
-                                            color: Theme.surfaceContainerHighest
-                                            radius: 4
-                                            z: 100
-                                            StyledText { id: tooltipText; anchors.centerIn: parent; text: dayData.date + ": " + dayData.count; font.pixelSize: 11; color: Theme.surfaceText }
-                                        }
                                     }
                                 }
                             }
