@@ -408,12 +408,8 @@ exit 0
             y: root.popoutY >= 0 ? root.popoutY : y
             onXChanged: if (visible) PluginService.savePluginData("codeforcesHeatmap", "popoutX", x)
             onYChanged: if (visible) PluginService.savePluginData("codeforcesHeatmap", "popoutY", y)
-            headerText: "Codeforces Heatmap"
-            detailsText: {
-                if (root.isError) return root.errorMessage
-                if (root.isLoading) return "Loading..."
-                return root.codeforcesHandle
-            }
+            headerText: ""
+            detailsText: ""
             showCloseButton: false
 
             Column {
